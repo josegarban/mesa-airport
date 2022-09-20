@@ -105,47 +105,18 @@ class Boid(mesa.Agent):
 
 class Airplane(mesa.Agent):
     """
-    Class based on Boid, with fewer features
+    Class similar to Boid, with fewer features
     """
-
     def __init__(
         self,
         unique_id,
         model,
         pos,
-        # Variation in position does not depend on other airplanes
-        speed=0,
-        velocity=0,
-        # No vision of other airplanes
-        vision=0,
-        # No separation with other airplanes
-        separation=0,
-        cohere=0,
-        separate=0,
-        match=0,
+        end_pos
     ):
-        """
-        Create a new Boid flocker agent.
-        Args:
-            unique_id: Unique agent identifyer.
-            pos: Starting position
-            speed: Distance to move per step.
-            heading: numpy vector for the Boid's direction of movement.
-            vision: Radius to look around for nearby Boids.
-            separation: Minimum distance to maintain from other Boids.
-            cohere: the relative importance of matching neighbors' positions
-            separate: the relative importance of avoiding close neighbors
-            match: the relative importance of matching neighbors' headings
-        """
         super().__init__(unique_id, model)
-        self.pos = np.array(pos)
-        self.speed = speed
-        self.velocity = velocity
-        self.vision = vision
-        self.separation = separation
-        self.cohere_factor = cohere
-        self.separate_factor = separate
-        self.match_factor = match
+        self.pos        = np.array(pos)
+        self.end_pos    = np.array(end_pos)
 
     
     def step(self):
@@ -153,6 +124,6 @@ class Airplane(mesa.Agent):
         Move to another position
         """
         x_increment, y_increment = 1, 1
-        new_pos = self.pos[0] + x_increment , self.pos[1] + y_increment
-        self.pos = new_pos
-        self.model.space.move_agent(self, new_pos)
+        calc_pos = self.pos[0] + x_increment , self.pos[1] + y_increment
+        self.pos = calc_pos
+        self.model.space.move_agent(self, calc_pos)

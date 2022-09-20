@@ -4,7 +4,7 @@ from pprint import pprint
 
 # First, let's determine fixed positions for the airports
 
-AIRPORTS = ( (2,2), (3,8), (1,0), (1,10), (8,1), (7,5) )
+AIRPORTS = ( (2,2), (3,8), (1,0), (1,9), (8,1), (7,5) )
 
 def destinations(airports=AIRPORTS):
     """
@@ -46,8 +46,15 @@ def pathmaker(map=pointsetter(), route_extremes=AIRPORTS[0:2], width=10, height=
     path, cost = skimage.graph.route_through_array(costs, start=start, end=end, fully_connected=False)
     return route_extremes, array, path, cost
 
+def main(map=pointsetter(), airports=AIRPORTS, width=10, height=10):
+    output = []
+    for destination in destinations(airports):
+        output.append(pathmaker(map, destination, width, height))
+    return output
+
 if __name__ == "__main__":
     # Test function
     #print(np.asarray(pointsetter()))
     #for x in pathmaker(): print(x)
-    destinations()
+    #print(destinations())
+    print(main())
