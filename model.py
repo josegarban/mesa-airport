@@ -74,25 +74,28 @@ class BoidFlockers(mesa.Model):
     def step(self):
         self.schedule.step()
 
-
 class AirplaneFlockers(BoidFlockers):
+    def __init__(
+                self, population, width, height, routes):
+        self.routes = routes
+        super().__init__(population, width, height)
 
     def make_agents(self):
         """
         Create self.population agents, with random positions and starting headings.
         """
-        for i in range(self.population):
-            x = self.random.random() * self.space.x_max
-            y = self.random.random() * self.space.y_max
+        for i in range(len(self.routes)):
+            x = self.routes[i][0][0]
+            y = self.routes[i][0][1]
             pos = np.array((x, y))
-            boid = Airplane(
+            airplane = Airplane(
                     i,
                     self,
                     pos,
                     0,0
                     )
-            self.space.place_agent(boid, pos)
-            self.schedule.add(boid)
+            self.space.place_agent(airplane, pos)
+            self.schedule.add(airplane)
 
     def step(self):
         self.schedule.step()

@@ -152,7 +152,7 @@ class Airplane(mesa.Agent):
         """
         Move to another position
         """
-        x_increment, y_increment = 1, 100*random()
+        x_increment, y_increment = 1, 1
         new_pos = self.pos[0] + x_increment , self.pos[1] + y_increment
         self.pos = new_pos
         self.model.space.move_agent(self, new_pos)
