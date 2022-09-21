@@ -1,3 +1,5 @@
+# Code based in MESA's own examples
+ 
 import mesa
 import numpy as np
 from random import random

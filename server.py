@@ -1,3 +1,5 @@
+# Code based in MESA's own examples
+
 import mesa
 from mesa.visualization.ModularVisualization import ModularServer
 import paths

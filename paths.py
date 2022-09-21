@@ -1,3 +1,5 @@
+# Code based in MESA's own examples
+
 import numpy as np
 import skimage
 from pprint import pprint
