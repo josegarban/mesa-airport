@@ -146,7 +146,7 @@ class Airplane(mesa.Agent):
 
         # Reverse direction?
         if   self.index + 1 == len(self.route)  : self.direction = -1
-        elif self.index - 1 == 0                : self.direction =  1
+        elif self.index - 1 == -1                : self.direction =  1
 
         next_pos    = self.route[next_idx]
         self.previ  = self.index
