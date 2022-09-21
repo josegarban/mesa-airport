@@ -8,7 +8,7 @@ Uses numpy arrays to represent vectors.
 import mesa
 import numpy as np
 
-from boid import Boid, Airplane
+from boid import Boid, Airplane, Airport
 
 
 class BoidFlockers(mesa.Model):
@@ -78,12 +78,16 @@ class AirplaneFlockers(BoidFlockers):
     def __init__(
                 self, population, width, height, routes):
         self.routes = routes
+
         self.index = 0 #Position in route where the agent finds itself
+        self.route_extremes = [ [r[0], r[-1]] for r in routes ]
+        self.airport_locations = [x for x in {s for s in [a[0] for a in self.route_extremes]+[a[1] for a in self.route_extremes]}]
+        self.grid = mesa.space.MultiGrid(width, height, torus=True)
         super().__init__(population, width, height)        
 
     def make_agents(self):
         """
-        Create self.population agents, with random positions and starting headings.
+        Create self.population agents, starting at an airport.
         """
         for i in range(len(self.routes)):
             x = self.routes[i][0][0]
@@ -102,8 +106,25 @@ class AirplaneFlockers(BoidFlockers):
                     )
             self.space.place_agent(airplane, pos)
             self.schedule.add(airplane)
+        
+        """
+        Create airports.
+        """
+        for i in range(len(self.airport_locations)):
+            x, y = self.airport_locations[i][0], self.airport_locations[i][1]
+            pos = np.array((x, y))
+            runways = 1
+            runways_occupied = 1
+            grid = self.grid
+
+            airport = Airport(
+                i+len(self.routes),
+                self,
+                pos,
+                runways,runways_occupied,grid
+            )
+            self.space.place_agent(airport, pos)
+            self.schedule.add(airport)
 
     def step(self):
         self.schedule.step()
-        self.index = self.index + 1
-        #print(self.index)

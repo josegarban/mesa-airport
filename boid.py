@@ -119,6 +119,7 @@ class Airplane(mesa.Agent):
         self.index      = index
         self.previ      = previ
         self.direction  = 1
+        self.type       = "airplane"
 
         print(self.pos)
     
@@ -153,3 +154,46 @@ class Airplane(mesa.Agent):
         self.index  = next_idx
         self.model.space.move_agent(self, next_pos)
 
+
+
+class Airport(mesa.Agent):
+    """
+    An airport is an agent that doesn't move and that checks how many airplanes there are at its position
+    """
+    def __init__(
+        self,
+        unique_id,
+        model,
+        pos,
+        grid,
+        runways=1,
+        runways_occupied=0,
+        full=False,
+        type="airport"
+    ):
+        """
+        pos: position of the airport
+        runways: amount of runways for airplanes
+        Runways don't have a spatial location different from that of the airport
+        """
+        super().__init__(unique_id, model)
+        self.pos                = np.array(pos)
+        self.runways            = runways
+        self.runways_occupied   = runways_occupied
+        self.full               = full
+        self.grid               = grid
+        self.type               = type
+
+    def step(self):
+        this_cell = self.model.grid.get_cell_list_contents([self.pos])
+        airplanes = [obj for obj in this_cell if isinstance(obj, Airplane)]
+        
+        if len(airplanes) == 0:
+            self.runways_occupied=0
+            self.full = False
+        elif len(airplanes) < self.runways:
+            self.runways_occupied = len(airplanes)
+            self.full = False
+        elif len(airplanes) == self.runways:
+            self.runways_occupied = len(airplanes)
+            self.full = True
