@@ -1,7 +1,7 @@
 import mesa
 import numpy as np
 from random import random
-
+import paths
 
 class Boid(mesa.Agent):
     """
@@ -120,7 +120,7 @@ class Airplane(mesa.Agent):
         self.previ      = previ
         self.direction  = 1
         self.type       = "airplane"
-
+        self.next       = None
         print(self.pos)
     
     def step(self):
@@ -147,13 +147,23 @@ class Airplane(mesa.Agent):
 
         # Reverse direction?
         if   self.index + 1 == len(self.route)  : self.direction = -1
-        elif self.index - 1 == -1                : self.direction =  1
+        elif self.index - 1 == -1               : self.direction =  1
 
+        # Check if airports are full
         next_pos    = self.route[next_idx]
+        self.next   = np.array(self.route[next_idx])
+    
+        neighbors = self.model.space.get_neighbors(self.pos, 1, False)
+        airports_checked = [obj.full for obj in neighbors if obj.type=="airport" and np.array_equal(obj.pos,self.next)]
+        if len (airports_checked) == 1: # If the next point is the airport where we'll land
+            if airports_checked[0]: # If that airport is full
+                print("Warning. Airport at {0} is full.".format(self.next))
+        
         self.previ  = self.index
         self.index  = next_idx
         self.model.space.move_agent(self, next_pos)
-
+        self.pos    = self.next
+        
 
 
 class Airport(mesa.Agent):
@@ -165,7 +175,6 @@ class Airport(mesa.Agent):
         unique_id,
         model,
         pos,
-        grid,
         runways=1,
         runways_occupied=0,
         full=False,
@@ -181,12 +190,11 @@ class Airport(mesa.Agent):
         self.runways            = runways
         self.runways_occupied   = runways_occupied
         self.full               = full
-        self.grid               = grid
         self.type               = type
 
     def step(self):
-        this_cell = self.model.grid.get_cell_list_contents([self.pos])
-        airplanes = [obj for obj in this_cell if isinstance(obj, Airplane)]
+        neighbors = self.model.space.get_neighbors(self.pos, 1, False)
+        airplanes = [obj for obj in neighbors if obj.type=="airplane"]
         
         if len(airplanes) == 0:
             self.runways_occupied=0

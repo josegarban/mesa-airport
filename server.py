@@ -1,24 +1,27 @@
 import mesa
 from mesa.visualization.ModularVisualization import ModularServer
-
-from model import BoidFlockers
+import paths
+from model import AirplaneFlockers
 from SimpleContinuousModule import SimpleCanvas
 
 def draw(agent):
     portrayal = {"Shape": "circle", "r": 2, "Filled": "true", "Color": "Red", "Layer":0}
     return portrayal
 
-canvas_element = SimpleCanvas(draw, 500, 500)
+canvas_element = SimpleCanvas(draw, 10, 10)
+
+routes = paths.AIRPORTS
+worldmap, route_solutions = paths.main(routes, width=10, height=10)
+
 
 model_params = {
-    "population": 10,
-    "width": 100,
-    "height": 100,
-    "speed": 5,
-    "vision": 10,
-    "separation": 2
+    "population": 0,
+    "width": 10,
+    "height": 10,
+    "routes": route_solutions
 }
 
-server = ModularServer( BoidFlockers, 
+
+server = ModularServer( AirplaneFlockers, 
                         [canvas_element], 
-                        "Boids", model_params)
+                        "Planes", model_params)

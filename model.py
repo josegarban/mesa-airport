@@ -82,7 +82,6 @@ class AirplaneFlockers(BoidFlockers):
         self.index = 0 #Position in route where the agent finds itself
         self.route_extremes = [ [r[0], r[-1]] for r in routes ]
         self.airport_locations = [x for x in {s for s in [a[0] for a in self.route_extremes]+[a[1] for a in self.route_extremes]}]
-        self.grid = mesa.space.MultiGrid(width, height, torus=True)
         super().__init__(population, width, height)        
 
     def make_agents(self):
@@ -95,7 +94,6 @@ class AirplaneFlockers(BoidFlockers):
             pos = np.array((x, y))
             route = self.routes[i]
             index = self.index
-            
             previ = 0
             direction = 1
             
@@ -115,16 +113,17 @@ class AirplaneFlockers(BoidFlockers):
             pos = np.array((x, y))
             runways = 1
             runways_occupied = 1
-            grid = self.grid
-
+            
             airport = Airport(
                 i+len(self.routes),
                 self,
                 pos,
-                runways,runways_occupied,grid
+                runways,runways_occupied
             )
             self.space.place_agent(airport, pos)
             self.schedule.add(airport)
 
     def step(self):
         self.schedule.step()
+        print(self.index)
+        self.index += 1
