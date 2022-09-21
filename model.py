@@ -78,7 +78,7 @@ class AirplaneFlockers(BoidFlockers):
     def __init__(
                 self, population, width, height, routes):
         self.routes = routes
-        self.end_pos = [routes[i][1] for i in range(len(routes))]
+        self.index = 0 #Position in route where the agent finds itself
         super().__init__(population, width, height)        
 
     def make_agents(self):
@@ -89,14 +89,21 @@ class AirplaneFlockers(BoidFlockers):
             x = self.routes[i][0][0]
             y = self.routes[i][0][1]
             pos = np.array((x, y))
-            end_pos = self.end_pos
+            route = self.routes[i]
+            index = self.index
+            
+            previ = 0
+            direction = 1
+            
             airplane = Airplane(
                     i,
                     self,
-                    pos,end_pos
+                    pos,route,index,previ,direction
                     )
             self.space.place_agent(airplane, pos)
             self.schedule.add(airplane)
 
     def step(self):
         self.schedule.step()
+        self.index = self.index + 1
+        #print(self.index)

@@ -111,19 +111,45 @@ class Airplane(mesa.Agent):
         self,
         unique_id,
         model,
-        pos,
-        end_pos
+        pos,route,index,previ,direction
     ):
         super().__init__(unique_id, model)
         self.pos        = np.array(pos)
-        self.end_pos    = np.array(end_pos)
+        self.route      = route
+        self.index      = index
+        self.previ      = previ
+        self.direction  = 1
 
+        print(self.pos)
     
     def step(self):
         """
         Move to another position
         """
-        x_increment, y_increment = 1, 1
-        calc_pos = self.pos[0] + x_increment , self.pos[1] + y_increment
-        self.pos = calc_pos
-        self.model.space.move_agent(self, calc_pos)
+        print("Plane {0} at position {1} ({2}) in direction {3}"\
+            .format(self.unique_id, self.index, self.pos, self.direction))
+
+        if self.direction == 1:
+            if      self.index + 1 == len(self.route):
+                next_idx = self.index
+            elif    self.index + 1 <= len(self.route):
+                next_idx = self.index + 1
+            elif    self.index == 0:
+                next_idx = self.index
+        elif self.direction == -1: # Going backwards
+            if      self.index == 0:
+                next_idx = self.index
+            elif    self.index - 1 >= -1:
+                next_idx = self.index - 1
+            elif    self.index == 0:
+                next_idx = self.index
+
+        # Reverse direction?
+        if   self.index + 1 == len(self.route)  : self.direction = -1
+        elif self.index - 1 == 0                : self.direction =  1
+
+        next_pos    = self.route[next_idx]
+        self.previ  = self.index
+        self.index  = next_idx
+        self.model.space.move_agent(self, next_pos)
+

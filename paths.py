@@ -4,14 +4,13 @@ from pprint import pprint
 
 # First, let's determine fixed positions for the airports
 
-AIRPORTS = ( (2,2), (3,8), (1,0), (1,9), (8,1), (7,5) )
+AIRPORTS = ( (2,2), (3,3), (1,0), (1,2), (8,1), (8,3) )
 
 def destinations(airports=AIRPORTS):
     """
     Match airport i to airport i+1
     """
     alldestinations = [ (airports[i], airports[i+1]) for i in list(range(len(airports))) if i%2 == 0 ]
-    print(alldestinations)
     return alldestinations
 
 
@@ -46,11 +45,13 @@ def pathmaker(map=pointsetter(), route_extremes=AIRPORTS[0:2], width=10, height=
     path, cost = skimage.graph.route_through_array(costs, start=start, end=end, fully_connected=False)
     return route_extremes, array, path, cost
 
-def main(map=pointsetter(), airports=AIRPORTS, width=10, height=10):
-    output = []
+def main(airports=AIRPORTS, width=10, height=10):
+    worldmap = pointsetter(mapmaker(width, height), airports, width, height) 
+    solutions = []
     for destination in destinations(airports):
-        output.append(pathmaker(map, destination, width, height))
-    return output
+        attachment = pathmaker(worldmap, destination, width, height)
+        solutions.append(attachment[2])
+    return worldmap, solutions
 
 if __name__ == "__main__":
     # Test function
